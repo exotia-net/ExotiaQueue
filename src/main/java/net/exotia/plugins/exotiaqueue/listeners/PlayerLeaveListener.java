@@ -30,9 +30,9 @@ public class PlayerLeaveListener implements Listener {
                 if (queuedUser.getPosition() != 1 && queuedUser.getPosition() >= position && queuedUser.getServer().equalsIgnoreCase(queue.getServer())) {
                     int newPosition = queuedUser.getPosition()-1;
                     queuedUser.setPosition(newPosition);
-                    queuedUser.updateBossBar(queue);
-                    MessageUtil.sendActionbar(onlinePlayer, "Twoja poazycja: " + newPosition + " na " + queue.getPlayers().size());
-                    onlinePlayer.sendMessage("Twoja poazycja: " + newPosition + " na " + queue.getPlayers().size());
+                    this.userService.updateBossBar(queuedUser);
+//                    MessageUtil.sendActionbar(onlinePlayer, "Twoja poazycja: " + newPosition + " na " + queue.getPlayers().size());
+//                    onlinePlayer.sendMessage("Twoja poazycja: " + newPosition + " na " + queue.getPlayers().size());
                 }
             });
         }

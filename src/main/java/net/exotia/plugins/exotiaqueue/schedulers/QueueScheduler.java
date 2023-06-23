@@ -1,6 +1,7 @@
 package net.exotia.plugins.exotiaqueue.schedulers;
 
 import eu.okaeri.injector.annotation.Inject;
+import net.exotia.plugins.exotiaqueue.configuration.PluginConfiguration;
 import net.exotia.plugins.exotiaqueue.objects.ProxyService;
 import net.exotia.plugins.exotiaqueue.objects.queue.Queue;
 import net.exotia.plugins.exotiaqueue.objects.queue.QueueService;
@@ -8,18 +9,16 @@ import net.exotia.plugins.exotiaqueue.objects.user.User;
 import net.exotia.plugins.exotiaqueue.objects.user.UserService;
 import net.exotia.plugins.exotiaqueue.utils.MessageUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class QueueScheduler implements Runnable {
     @Inject private QueueService queueService;
     @Inject private UserService userService;
     @Inject private ProxyService proxyService;
+    @Inject private PluginConfiguration configuration;
 
     @Override
     public void run() {
-        List.of("survival", "test_instance").forEach(server -> {
+        this.configuration.getAvailableServers().forEach(server -> {
             Queue queue = this.queueService.getQueue(server);
             Bukkit.getOnlinePlayers().forEach(player -> {
                 if (queue.getPlayers().contains(player.getUniqueId())) {
@@ -27,10 +26,9 @@ public class QueueScheduler implements Runnable {
                     if (user.getPosition() == 1) {
                         user.setServer(null);
                         user.setPosition(0);
-                        player.sendMessage("Polaczono z serwerem " + server);
-                        // Tu gracz ma byc przesylany na serwer
+                        MessageUtil.sendMessage(player, this.configuration.getSuccessfullyConnected().replace("{server}", server));
                         this.proxyService.sendPlayer(player, server);
-                        user.destroyBossBar();
+                        this.userService.destroyBossBar(user);
                         queue.removePlayer(player);
                         this.notifyPlayers(queue);
                     }
@@ -38,7 +36,6 @@ public class QueueScheduler implements Runnable {
             });
         });
     }
-
     private void notifyPlayers(Queue queue) {
         Bukkit.getOnlinePlayers().forEach(player -> {
             User user = this.userService.getUser(player);
@@ -46,10 +43,7 @@ public class QueueScheduler implements Runnable {
             if (user.getServer().equalsIgnoreCase(queue.getServer())) {
                 int position = user.getPosition()-1;
                 user.setPosition(position);
-                user.updateBossBar(queue);
-                System.out.println(player.getName() + " " + position + " " + queue.getPlayers().size());
-                MessageUtil.sendActionbar(player, "Twoja poazycja: " + position + " na " + queue.getPlayers().size());
-                player.sendMessage("Twoja poazycja: " + position + " na " + queue.getPlayers().size());
+                this.userService.updateBossBar(user);
             }
         });
     }
