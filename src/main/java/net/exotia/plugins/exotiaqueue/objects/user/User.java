@@ -33,6 +33,7 @@ public class User {
     }
     public void updateBossBar(Queue queue) {
         if (this.bossBar == null) return;
+        this.bossBar.setTitle(this.formatTitle(queue));
         this.bossBar.setProgress(this.getProgress(queue));
     }
     private double getProgress(Queue queue) {

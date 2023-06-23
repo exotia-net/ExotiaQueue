@@ -28,7 +28,7 @@ public final class ExotiaQueue extends JavaPlugin {
         this.injector.registerInjectable(this.injector.createInstance(UserService.class));
 
         this.getCommand("queue").setExecutor(this.injector.createInstance(QueueCommand.class));
-        this.getServer().getScheduler().runTaskTimerAsynchronously(this, this.injector.createInstance(QueueScheduler.class), 0L, 120L);
+        this.getServer().getScheduler().runTaskTimerAsynchronously(this, this.injector.createInstance(QueueScheduler.class), 0L, 15*20L);
 
         Stream.of(
                 this.injector.createInstance(PlayerLeaveListener.class),

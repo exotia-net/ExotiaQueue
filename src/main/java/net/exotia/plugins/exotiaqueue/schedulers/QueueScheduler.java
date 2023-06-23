@@ -6,11 +6,11 @@ import net.exotia.plugins.exotiaqueue.objects.queue.Queue;
 import net.exotia.plugins.exotiaqueue.objects.queue.QueueService;
 import net.exotia.plugins.exotiaqueue.objects.user.User;
 import net.exotia.plugins.exotiaqueue.objects.user.UserService;
+import net.exotia.plugins.exotiaqueue.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.UUID;
 
 public class QueueScheduler implements Runnable {
     @Inject private QueueService queueService;
@@ -29,6 +29,7 @@ public class QueueScheduler implements Runnable {
                         user.setPosition(0);
                         player.sendMessage("Polaczono z serwerem " + server);
                         // Tu gracz ma byc przesylany na serwer
+                        this.proxyService.sendPlayer(player, server);
                         user.destroyBossBar();
                         queue.removePlayer(player);
                         this.notifyPlayers(queue);
@@ -44,7 +45,10 @@ public class QueueScheduler implements Runnable {
             if (user.getServer() == null) return;
             if (user.getServer().equalsIgnoreCase(queue.getServer())) {
                 int position = user.getPosition()-1;
+                user.setPosition(position);
                 user.updateBossBar(queue);
+                System.out.println(player.getName() + " " + position + " " + queue.getPlayers().size());
+                MessageUtil.sendActionbar(player, "Twoja poazycja: " + position + " na " + queue.getPlayers().size());
                 player.sendMessage("Twoja poazycja: " + position + " na " + queue.getPlayers().size());
             }
         });

@@ -5,6 +5,7 @@ import net.exotia.plugins.exotiaqueue.objects.queue.Queue;
 import net.exotia.plugins.exotiaqueue.objects.queue.QueueService;
 import net.exotia.plugins.exotiaqueue.objects.user.User;
 import net.exotia.plugins.exotiaqueue.objects.user.UserService;
+import net.exotia.plugins.exotiaqueue.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,6 +30,8 @@ public class PlayerLeaveListener implements Listener {
                 if (queuedUser.getPosition() != 1 && queuedUser.getPosition() >= position && queuedUser.getServer().equalsIgnoreCase(queue.getServer())) {
                     int newPosition = queuedUser.getPosition()-1;
                     queuedUser.setPosition(newPosition);
+                    queuedUser.updateBossBar(queue);
+                    MessageUtil.sendActionbar(onlinePlayer, "Twoja poazycja: " + newPosition + " na " + queue.getPlayers().size());
                     onlinePlayer.sendMessage("Twoja poazycja: " + newPosition + " na " + queue.getPlayers().size());
                 }
             });
