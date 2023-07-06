@@ -30,7 +30,16 @@ public class QueueCommand implements CommandExecutor {
             return false;
         }
 
+        if (strings.length < 1) {
+            MessageUtil.sendMessage(player, "&cNiepoprawny serwer!");
+            return false;
+        }
         String server = strings[0];
+        if (player.hasPermission("exotia.queue.bypass")) {
+            this.proxyService.sendPlayer(player, server);
+            return false;
+        }
+
         if (this.queueService.getQueue(server) != null) {
             Queue queue = this.queueService.getQueue(server);
             queue.addPlayer(player);
